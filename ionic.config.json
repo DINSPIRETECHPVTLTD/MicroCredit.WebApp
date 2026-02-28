@@ -1,0 +1,7 @@
+{
+  "name": "MicroCredit.WebApp",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}
