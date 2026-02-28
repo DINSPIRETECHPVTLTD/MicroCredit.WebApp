@@ -1,0 +1,23 @@
+<ion-item>
+  <ion-input
+    [label]="label"
+    [labelPlacement]="labelPlacement"
+    type="email"
+    [placeholder]="placeholder"
+    [value]="value"
+    [disabled]="disabled"
+    (ionInput)="onInput($event)"
+    (ionBlur)="onBlur()"
+    required>
+  </ion-input>
+</ion-item>
+@if (invalid) {
+  <div class="error-message">
+    @if (errorRequired) {
+      <span>Email is required</span>
+    }
+    @if (errorEmail && !errorRequired) {
+      <span>Please enter a valid email address</span>
+    }
+  </div>
+}

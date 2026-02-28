@@ -1,9 +1,34 @@
-<ion-header>
+<ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>Login</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <p>Auth feature — login page placeholder.</p>
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="login-container">
+    <div class="login-card">
+      <div class="logo-section">
+        <ion-icon name="lock-closed-outline" size="large" color="primary"></ion-icon>
+        <h1>Welcome to MCS</h1>
+        <p>Sign in to continue</p>
+      </div>
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <app-email-control formControlName="email"></app-email-control>
+        <app-password-control formControlName="password"></app-password-control>
+
+        <div *ngIf="errorMessage()" class="error-message ion-margin-bottom">
+          {{ errorMessage() }}
+        </div>
+
+        <ion-button
+          expand="block"
+          type="submit"
+          [disabled]="loginForm.invalid || isLoading()"
+          class="ion-margin-top">
+          {{ isLoading() ? 'Signing in...' : 'Login' }}
+        </ion-button>
+      </form>
+    </div>
+  </div>
 </ion-content>
