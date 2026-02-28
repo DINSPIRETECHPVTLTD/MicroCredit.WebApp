@@ -57,9 +57,8 @@ export class LoginPage {
     this.isLoading.set(true);
 
     this.authService.login(this.loginForm.getRawValue()).subscribe({
-      next: (response) => {
+      next: () => {
         this.isLoading.set(false);
-        this.authService.setSession(response);
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {

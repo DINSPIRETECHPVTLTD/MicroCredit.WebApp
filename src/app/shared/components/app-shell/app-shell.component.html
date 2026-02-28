@@ -1,7 +1,7 @@
 <ion-header [translucent]="false">
   <div class="org-header">
     <div class="org-info">
-      <h2 class="org-name">{{ organization?.name || defaultOrgName }}</h2>
+      <h2 class="org-name">{{ organization?.name }}</h2>
       <p class="org-details" *ngIf="organization">
         <span *ngIf="organization.phoneNumber">{{ organization.phoneNumber }}</span>
         <span *ngIf="organization.address && organization.phoneNumber"> • </span>
@@ -9,15 +9,12 @@
       </p>
     </div>
     <div class="header-center">
-      <h2 class="header-branch-name" *ngIf="isBranchMode && selectedBranch">{{ selectedBranch?.name }}</h2>
+      <h2 class="header-branch-name" *ngIf="isBranchMode && selectedBranch">{{ selectedBranch.name }}</h2>
     </div>
     <div class="user-section">
       <span *ngIf="isOrgOwner" class="mode-badge" [class.mode-org]="isOrgMode" [class.mode-branch]="isBranchMode">
         {{ isOrgMode ? 'Org Mode' : 'Branch Mode' }}
       </span>
-      <a *ngIf="isOrgOwner && isBranchMode" class="return-to-org" (click)="onReturnToOrgMode()" href="javascript:void(0)">
-        Return back to Org Mode
-      </a>
       <div class="user-info">
         <ion-icon name="person-circle-outline" class="user-icon"></ion-icon>
         <span class="user-email">{{ userDisplayName }}</span>
@@ -87,6 +84,10 @@
     </nav>
 
     <nav class="nav-sidebar" *ngIf="isBranchMode">
+      <a *ngIf="isOrgOwner" class="nav-item return-to-org-item" (click)="onReturnToOrgMode()" href="javascript:void(0)">
+        <ion-icon name="arrow-back-outline" class="return-icon"></ion-icon>
+        Return back to Org Mode
+      </a>
       <button
         class="nav-item"
         [class.active]="activeMenu === 'Dashboard' || activeMenu === 'My View'"

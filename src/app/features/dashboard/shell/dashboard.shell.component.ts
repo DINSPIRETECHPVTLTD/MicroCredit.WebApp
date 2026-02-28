@@ -1,6 +1,5 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { NgIf } from '@angular/common';
 import { AuthService } from '../../auth/services/auth.service';
 import { AppShellComponent, AppShellOrgInfo, AppShellBranchInfo } from '../../../shared/components/app-shell';
 
@@ -14,8 +13,9 @@ export class DashboardShellComponent {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
+  /** Organization from login response, passed to app-shell for header. */
   get organization(): AppShellOrgInfo | null {
-    return this.auth.getSession()?.organization ?? null;
+    return this.auth.getOrganization();
   }
   selectedBranch: AppShellBranchInfo | null = null;
 
