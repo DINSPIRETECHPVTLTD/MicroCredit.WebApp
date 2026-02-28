@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'https://localhost:7119/',
+  // Use empty string so requests go to same origin (localhost:4200) and proxy.conf.json forwards to the API
+  apiUrl: '',
 };
 
 /*
