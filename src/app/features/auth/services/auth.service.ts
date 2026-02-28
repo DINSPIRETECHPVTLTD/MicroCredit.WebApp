@@ -6,6 +6,7 @@ import { environment } from '../../../../environments/environment';
 import { AuthRequest } from '../models/auth-request.model';
 import { AuthResponse } from '../models/auth-response.model';
 import { OrgResponse } from '../models/org-response.model';
+import { BranchResponse } from '../models/branch-response.model';
 
 const AUTH_STORAGE_KEY = 'auth_session';
 
@@ -61,8 +62,30 @@ export class AuthService {
       firstName: response.firstName ?? current.firstName,
       lastName: response.lastName ?? current.lastName,
       role: response.role ?? current.role,
+      mode: response.mode ?? current.mode,
       organization: response.organization ?? current.organization,
+      branch: response.branch !== undefined ? response.branch : current.branch,
     };
+  }
+
+  /**
+   * Switch to branch context. Calls POST auth/navigate-to-branch with branchId.
+   * Backend returns updated AuthResponse (mode = BRANCH, branch set).
+   */
+  navigateToBranch(branchId: number): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.baseUrl}auth/navigate-to-branch`, { branchId })
+      .pipe(tap((response) => this.setSession(response)));
+  }
+
+  /**
+   * Switch back to org context. Calls POST auth/navigate-to-org.
+   * Backend returns updated AuthResponse (mode = ORG, branch = null).
+   */
+  navigateToOrg(): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${this.baseUrl}auth/navigate-to-org`, {})
+      .pipe(tap((response) => this.setSession(response)));
   }
 
   logout(): void {
@@ -150,6 +173,14 @@ export class AuthService {
 
   getOrganization(): OrgResponse | null {
     return this.getSession()?.organization ?? null;
+  }
+
+  getBranch(): BranchResponse | null {
+    return this.getSession()?.branch ?? null;
+  }
+
+  getMode(): string {
+    return this.getSession()?.mode ?? 'ORG';
   }
 
   getDisplayName(): string {

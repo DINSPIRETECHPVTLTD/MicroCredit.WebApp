@@ -10,8 +10,12 @@ export interface AppShellOrgInfo {
   phoneNumber: string;
 }
 
+/** Matches API BranchResponse for display in header. */
 export interface AppShellBranchInfo {
+  id: number;
   name: string;
+  address: string;
+  phoneNumber: string;
 }
 
 @Component({

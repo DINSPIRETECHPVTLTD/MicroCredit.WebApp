@@ -13,15 +13,22 @@ export class DashboardShellComponent {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
-  /** Organization from login response, passed to app-shell for header. */
+  /** Organization from session (login / navigate-to-org). */
   get organization(): AppShellOrgInfo | null {
     return this.auth.getOrganization();
   }
-  selectedBranch: AppShellBranchInfo | null = null;
+  /** Branch from session (set by navigate-to-branch). */
+  get selectedBranch(): AppShellBranchInfo | null {
+    return this.auth.getBranch();
+  }
 
+  get isOrgMode(): boolean {
+    return this.auth.getMode() === 'ORG';
+  }
+  get isBranchMode(): boolean {
+    return this.auth.getMode() === 'BRANCH';
+  }
   isOrgOwner = true;
-  isOrgMode = true;
-  isBranchMode = false;
   isStaff = false;
   isBranchUser = false;
 
@@ -46,13 +53,20 @@ export class DashboardShellComponent {
   }
 
   returnToOrgMode(): void {
-    this.selectedBranch = null;
-    this.isBranchMode = false;
-    this.isOrgMode = true;
+    this.auth.navigateToOrg().subscribe({
+      error: () => {},
+    });
+  }
+
+  /** Call when user selects a branch (e.g. from branch list). */
+  selectBranch(branchId: number): void {
+    this.auth.navigateToBranch(branchId).subscribe({
+      error: () => {},
+    });
   }
 
   logout(): void {
-    this.auth.clearSession();
+    this.auth.logout();
     this.router.navigate(['/auth/login']);
   }
 }

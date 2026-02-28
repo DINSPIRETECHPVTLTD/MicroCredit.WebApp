@@ -1,4 +1,5 @@
 import { OrgResponse } from './org-response.model';
+import { BranchResponse } from './branch-response.model';
 
 export interface AuthResponse {
   token: string;
@@ -9,5 +10,7 @@ export interface AuthResponse {
   firstName: string;
   lastName: string;
   role: string;
-  organization?: OrgResponse; // required from API; optional for old stored session
+  mode?: string; // "ORG" | "BRANCH"; default "ORG"
+  organization?: OrgResponse;
+  branch?: BranchResponse | null;
 }
