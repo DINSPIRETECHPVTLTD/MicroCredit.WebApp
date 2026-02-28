@@ -14,7 +14,9 @@ export class DashboardShellComponent {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
 
-  organization: AppShellOrgInfo | null = { name: 'Navya Micro Credit Services', phone: '', city: '' };
+  get organization(): AppShellOrgInfo | null {
+    return this.auth.getSession()?.organization ?? null;
+  }
   selectedBranch: AppShellBranchInfo | null = null;
 
   isOrgOwner = true;

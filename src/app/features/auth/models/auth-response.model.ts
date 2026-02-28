@@ -1,3 +1,5 @@
+import { OrgResponse } from './org-response.model';
+
 export interface AuthResponse {
   token: string;
   userType: string;
@@ -6,4 +8,5 @@ export interface AuthResponse {
   firstName: string;
   lastName: string;
   role: string;
+  organization?: OrgResponse; // required from API; optional for old stored session
 }

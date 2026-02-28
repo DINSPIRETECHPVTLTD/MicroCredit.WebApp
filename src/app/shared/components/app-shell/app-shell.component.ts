@@ -2,10 +2,12 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { IonHeader, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { NgIf } from '@angular/common';
 
+/** Matches API OrgResponse for display in header (id, name, address, phoneNumber). */
 export interface AppShellOrgInfo {
+  id: number;
   name: string;
-  phone?: string;
-  city?: string;
+  address: string;
+  phoneNumber: string;
 }
 
 export interface AppShellBranchInfo {
@@ -38,8 +40,6 @@ export class AppShellComponent {
   @Output() returnToOrgMode = new EventEmitter<void>();
   @Output() logout = new EventEmitter<void>();
 
-  defaultOrgName = 'Navya Micro Credit Services';
-
   onMenuChange(menu: string): void {
     this.menuChange.emit(menu);
   }
@@ -55,4 +55,6 @@ export class AppShellComponent {
   onLogout(): void {
     this.logout.emit();
   }
+
+  defaultOrgName = 'Navya Micro Credit Services';
 }

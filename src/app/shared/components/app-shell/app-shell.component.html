@@ -3,9 +3,9 @@
     <div class="org-info">
       <h2 class="org-name">{{ organization?.name || defaultOrgName }}</h2>
       <p class="org-details" *ngIf="organization">
-        <span *ngIf="organization.phone">{{ organization.phone }}</span>
-        <span *ngIf="organization.city && organization.phone"> • </span>
-        <span *ngIf="organization.city">{{ organization.city }}</span>
+        <span *ngIf="organization.phoneNumber">{{ organization.phoneNumber }}</span>
+        <span *ngIf="organization.address && organization.phoneNumber"> • </span>
+        <span *ngIf="organization.address">{{ organization.address }}</span>
       </p>
     </div>
     <div class="header-center">
