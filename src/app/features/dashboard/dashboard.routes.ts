@@ -4,6 +4,13 @@ export const dashboardRoutes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./pages/dashboard/dashboard.page').then((m) => m.DashboardPage),
+      import('./shell/dashboard.shell.component').then((m) => m.DashboardShellComponent),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./pages/dashboard/dashboard.page').then((m) => m.DashboardPage),
+      },
+    ],
   },
 ];

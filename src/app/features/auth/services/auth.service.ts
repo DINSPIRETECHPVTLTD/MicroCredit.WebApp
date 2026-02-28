@@ -38,6 +38,25 @@ export class AuthService {
     localStorage.removeItem(AUTH_STORAGE_KEY);
   }
 
+  getSession(): AuthResponse | null {
+    const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw) as AuthResponse;
+    } catch {
+      return null;
+    }
+  }
+
+  getDisplayName(): string {
+    const session = this.getSession();
+    if (!session) return 'User';
+    if (session.firstName || session.lastName) {
+      return [session.firstName, session.lastName].filter(Boolean).join(' ').trim();
+    }
+    return session.email ?? 'User';
+  }
+
   isAuthenticated(): boolean {
     const token = this.getToken();
     if (!token) return false;

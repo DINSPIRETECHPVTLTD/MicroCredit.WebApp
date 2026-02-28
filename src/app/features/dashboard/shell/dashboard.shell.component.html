@@ -1,0 +1,19 @@
+<app-app-shell
+  [organization]="organization"
+  [selectedBranch]="selectedBranch"
+  [isOrgOwner]="isOrgOwner"
+  [isOrgMode]="isOrgMode"
+  [isBranchMode]="isBranchMode"
+  [isStaff]="isStaff"
+  [isBranchUser]="isBranchUser"
+  [userDisplayName]="userDisplayName"
+  [activeMenu]="activeMenu"
+  [showMasterSubmenu]="showMasterSubmenu"
+  [showFundsSubmenu]="showFundsSubmenu"
+  [showLoanSubmenu]="showLoanSubmenu"
+  (menuChange)="setActiveMenu($event)"
+  (submenuSelect)="selectSubmenu($event)"
+  (returnToOrgMode)="returnToOrgMode()"
+  (logout)="logout()">
+  <router-outlet></router-outlet>
+</app-app-shell>
