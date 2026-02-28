@@ -30,6 +30,41 @@ export class AuthService {
       .pipe(tap((response) => this.setSession(response)));
   }
 
+  /**
+   * Refresh access token. Call when API returns 401.
+   * Sends refreshToken in body if present; backend returns new token(s).
+   * Updates session (merges with current session if API returns only token).
+   */
+  refresh(): Observable<AuthResponse> {
+    const refreshToken = this.getSession()?.refreshToken ?? this.getToken();
+    const body = refreshToken ? { refreshToken } : {};
+    return this.http.post<AuthResponse>(`${this.baseUrl}auth/refresh`, body).pipe(
+      tap((response) => {
+        const merged = this.mergeSessionWithRefreshResponse(response);
+        this.setSession(merged);
+      })
+    );
+  }
+
+  /** Merge refresh response (may be only { token }) with current session. */
+  private mergeSessionWithRefreshResponse(response: Partial<AuthResponse>): AuthResponse {
+    const current = this.getSession();
+    if (!current) {
+      return response as AuthResponse;
+    }
+    return {
+      token: response.token ?? current.token,
+      refreshToken: response.refreshToken ?? current.refreshToken,
+      userType: response.userType ?? current.userType,
+      userId: response.userId ?? current.userId,
+      email: response.email ?? current.email,
+      firstName: response.firstName ?? current.firstName,
+      lastName: response.lastName ?? current.lastName,
+      role: response.role ?? current.role,
+      organization: response.organization ?? current.organization,
+    };
+  }
+
   logout(): void {
     this.clearSession();
   }

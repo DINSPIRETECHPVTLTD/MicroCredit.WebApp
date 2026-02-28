@@ -2,6 +2,7 @@ import { OrgResponse } from './org-response.model';
 
 export interface AuthResponse {
   token: string;
+  refreshToken?: string;
   userType: string;
   userId: number;
   email: string;
