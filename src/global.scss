@@ -200,3 +200,12 @@ ion-modal.add-master-data-modal {
   --max-height: 90vh;
   --border-radius: 12px;
 }
+
+/* Add/Edit User popup modal */
+ion-modal.user-form-modal {
+  --width: 100%;
+  --max-width: 920px;
+  --height: 90%;
+  --max-height: 90vh;
+  --border-radius: 12px;
+}

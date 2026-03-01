@@ -10,11 +10,11 @@ export const userRoutes: Routes = [
   {
     path: 'add',
     loadComponent: () =>
-      import('./pages/add-edit-user/user-form.page').then((m) => m.UserFormPage),
+      import('./pages/add-edit-user/add-edit-user.page').then((m) => m.AddEditUserPage),
   },
   {
     path: 'edit/:id',
     loadComponent: () =>
-      import('./pages/add-edit-user/user-form.page').then((m) => m.UserFormPage),
+      import('./pages/add-edit-user/add-edit-user.page').then((m) => m.AddEditUserPage),
   },
 ];

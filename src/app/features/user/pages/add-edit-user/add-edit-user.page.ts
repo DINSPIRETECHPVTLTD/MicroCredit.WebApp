@@ -1,24 +1,64 @@
 import {
   Component,
-  EventEmitter,
+  OnInit,
+  inject,
   Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
 } from '@angular/core';
+import { Router } from '@angular/router';
+import { ModalController } from '@ionic/angular/standalone';
 import {
   ReactiveFormsModule,
   FormBuilder,
   FormGroup,
   Validators,
+  AbstractControl,
+  ValidationErrors,
+  ValidatorFn,
 } from '@angular/forms';
-import { NgIf, NgFor } from '@angular/common';
-import { IonItem, IonLabel, IonInput, IonSelect, IonSelectOption, IonButton } from '@ionic/angular/standalone';
+import { NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
+import {
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonBackButton,
+  IonTitle,
+  IonBreadcrumbs,
+  IonBreadcrumb,
+  IonContent,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardSubtitle,
+  IonCardContent,
+  IonItem,
+  IonLabel,
+  IonInput,
+  IonSelect,
+  IonSelectOption,
+  IonButton,
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonItemDivider,
+  IonIcon,
+  IonFooter,
+} from '@ionic/angular/standalone';
 
 import { EmailControlComponent } from '../../../../shared/components/email-control';
 import { PasswordControlComponent } from '../../../../shared/components/password-control';
 import { User } from '../../models/user.model';
 import { UserFormValue } from '../../models/user-form-value.model';
+import { UserResponse } from '../../models/user-response.model';
+
+function passwordMatchValidator(): ValidatorFn {
+  return (form: AbstractControl): ValidationErrors | null => {
+    const g = form as FormGroup;
+    const p = g.get('password')?.value;
+    const c = g.get('confirmPassword')?.value;
+    if (p == null || c == null || p === '' || c === '') return null;
+    return p !== c ? { confirmPasswordMismatch: true } : null;
+  };
+}
 
 @Component({
   selector: 'app-add-edit-user',
@@ -27,98 +67,160 @@ import { UserFormValue } from '../../models/user-form-value.model';
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    NgIf,
     NgFor,
+    NgIf,
+    NgTemplateOutlet,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonBackButton,
+    IonTitle,
+    IonBreadcrumbs,
+    IonBreadcrumb,
+    IonContent,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardSubtitle,
+    IonCardContent,
     IonItem,
     IonLabel,
     IonInput,
     IonSelect,
     IonSelectOption,
     IonButton,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonItemDivider,
+    IonIcon,
+    IonFooter,
     EmailControlComponent,
     PasswordControlComponent,
   ],
 })
-export class AddEditUserPage implements OnChanges {
-  @Input() user: User | null = null;
-  @Input() roles: string[] = ['Admin', 'User', 'Staff'];
-  @Output() save = new EventEmitter<UserFormValue>();
-  @Output() cancel = new EventEmitter<void>();
+export class AddEditUserPage implements OnInit {
+  private readonly router = inject(Router);
+  private readonly fb = inject(FormBuilder);
+  private readonly modalController = inject(ModalController);
 
-  form: FormGroup;
-  isEditMode = false;
-  showPassword = false;
+  @Input() isModal = false;
+  @Input() userResponse: UserResponse | null = null;
 
-  constructor(private readonly fb: FormBuilder) {
-    this.form = this.fb.nonNullable.group({
-      email: ['', [Validators.required, Validators.email]],
-      firstName: ['', [Validators.required]],
-      lastName: ['', [Validators.required]],
-      role: ['User', [Validators.required]],
-      password: [''],
-    });
+  user: User | null = null;
+  roles = ['Owner', 'Investor'];
+  form!: FormGroup;
+
+  get isEditMode(): boolean {
+    return !!this.user;
   }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    const user = changes['user']?.currentValue as User | null;
-    this.isEditMode = !!user;
-    if (user) {
-      this.form.patchValue({
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role,
-        password: '',
-      });
-      this.form.get('password')?.clearValidators();
-      this.form.get('password')?.updateValueAndValidity();
-      this.showPassword = false;
-    } else {
-      this.form.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
-      this.form.get('password')?.updateValueAndValidity();
-      this.form.patchValue({ password: '' });
-    }
-  }
-
-  get title(): string {
+  get pageTitle(): string {
     return this.isEditMode ? 'Edit User' : 'Add User';
   }
 
-  get passwordRequired(): boolean {
-    return !this.isEditMode || this.showPassword;
+  constructor() {
+    if (!this.userResponse) {
+      const state = this.router.getCurrentNavigation()?.extras?.state as { user?: UserResponse } | undefined;
+      const res = state?.user ?? null;
+      this.user = res ? this.mapResponseToUser(res) : null;
+    }
+  }
+
+  ngOnInit(): void {
+    if (this.userResponse != null) {
+      this.user = this.mapResponseToUser(this.userResponse);
+    }
+    this.buildForm();
+  }
+
+  private mapResponseToUser(r: UserResponse): User {
+    return {
+      id: r.id,
+      firstName: r.firstName,
+      surname: r.surname,
+      email: r.email,
+      role: r.role,
+      address: r.address,
+      address1: r.address,
+    };
+  }
+
+  private buildForm(): void {
+    const u = this.user;
+    this.form = this.fb.nonNullable.group(
+      {
+        firstName: [u?.firstName ?? '', [Validators.required]],
+        surname: [u?.surname ?? '', [Validators.required]],
+        email: [u?.email ?? '', [Validators.required, Validators.email]],
+        phoneNumber: [u?.phoneNumber ?? ''],
+        role: [u?.role ?? 'Owner', [Validators.required]],
+        password: [''],
+        confirmPassword: [''],
+        address1: [u?.address1 ?? u?.address ?? ''],
+        address2: [u?.address2 ?? ''],
+        city: [u?.city ?? ''],
+        state: [u?.state ?? ''],
+        pinCode: [u?.pinCode ?? ''],
+      },
+      { validators: this.isEditMode ? [] : [passwordMatchValidator()] }
+    );
+    if (this.isEditMode) {
+      this.form.get('password')?.clearValidators();
+      this.form.get('password')?.updateValueAndValidity();
+      this.form.get('confirmPassword')?.clearValidators();
+      this.form.get('confirmPassword')?.updateValueAndValidity();
+    } else {
+      this.form.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
+      this.form.get('password')?.updateValueAndValidity();
+      this.form.get('confirmPassword')?.setValidators([Validators.required]);
+      this.form.get('confirmPassword')?.updateValueAndValidity();
+    }
+  }
+
+  getConfirmPasswordError(): string {
+    const c = this.form.get('confirmPassword');
+    if (c?.errors?.['required']) return 'Confirm password is required.';
+    if (this.form.errors?.['confirmPasswordMismatch'] || c?.errors?.['confirmPasswordMismatch']) return 'Passwords do not match.';
+    return 'Invalid.';
   }
 
   onSubmit(): void {
     if (this.form.invalid) return;
+    if (!this.isEditMode && this.form.get('password')?.value !== this.form.get('confirmPassword')?.value) {
+      this.form.setErrors({ ...this.form.errors, confirmPasswordMismatch: true });
+      return;
+    }
     const raw = this.form.getRawValue();
     const value: UserFormValue = {
       email: raw.email,
       firstName: raw.firstName,
-      lastName: raw.lastName,
+      surname: raw.surname,
       role: raw.role,
+      phoneNumber: raw.phoneNumber || undefined,
+      address1: raw.address1 || undefined,
+      address2: raw.address2 || undefined,
+      city: raw.city || undefined,
+      state: raw.state || undefined,
+      pinCode: raw.pinCode || undefined,
     };
-    if (this.isEditMode) {
-      value.id = this.user!.id;
-      if (raw.password) value.password = raw.password;
+    if (this.isEditMode && this.user) {
+      value.id = this.user.id;
     } else {
       value.password = raw.password;
     }
-    this.save.emit(value);
+    // TODO: call user API (create/update)
+    if (this.isModal) {
+      this.modalController.dismiss(value);
+    } else {
+      this.router.navigate(['/users']);
+    }
   }
 
   onCancel(): void {
-    this.cancel.emit();
-  }
-
-  togglePasswordField(): void {
-    this.showPassword = !this.showPassword;
-    const ctrl = this.form.get('password');
-    if (this.showPassword) {
-      ctrl?.setValidators([Validators.required, Validators.minLength(6)]);
+    if (this.isModal) {
+      this.modalController.dismiss();
     } else {
-      ctrl?.setValidators([]);
-      ctrl?.setValue('');
+      this.router.navigate(['/users']);
     }
-    ctrl?.updateValueAndValidity();
   }
 }

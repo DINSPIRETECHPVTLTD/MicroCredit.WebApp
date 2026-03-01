@@ -1,54 +1,196 @@
-<div class="add-edit-user">
-  <h2>{{ title }}</h2>
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      @if (isModal) {
+        <ion-button (click)="onCancel()">
+          <ion-icon name="close"></ion-icon>
+        </ion-button>
+      } @else {
+        <ion-back-button defaultHref="/users" text=""></ion-back-button>
+      }
+    </ion-buttons>
+    @if (isModal) {
+      <ion-title>{{ isEditMode ? 'Update user information' : 'Create a new organization user' }}</ion-title>
+    } @else {
+      <ion-title>{{ pageTitle }}</ion-title>
+    }
+  </ion-toolbar>
+  @if (!isModal) {
+    <ion-toolbar class="ion-no-border">
+      <ion-breadcrumbs class="breadcrumb">
+        <ion-breadcrumb href="/users">Users</ion-breadcrumb>
+        <ion-breadcrumb>{{ pageTitle }}</ion-breadcrumb>
+      </ion-breadcrumbs>
+    </ion-toolbar>
+  }
+</ion-header>
 
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <app-email-control formControlName="email"></app-email-control>
-
-    <ion-item>
-      <ion-label position="stacked">First name</ion-label>
-      <ion-input formControlName="firstName" type="text" placeholder="First name"></ion-input>
-    </ion-item>
-    <p *ngIf="form.get('firstName')?.invalid && form.get('firstName')?.touched" class="ion-text-center ion-color-danger">
-      First name is required.
-    </p>
-
-    <ion-item>
-      <ion-label position="stacked">Last name</ion-label>
-      <ion-input formControlName="lastName" type="text" placeholder="Last name"></ion-input>
-    </ion-item>
-    <p *ngIf="form.get('lastName')?.invalid && form.get('lastName')?.touched" class="ion-text-center ion-color-danger">
-      Last name is required.
-    </p>
-
-    <ion-item>
-      <ion-label position="stacked">Role</ion-label>
-      <ion-select formControlName="role" placeholder="Select role" interface="action-sheet">
-        <ion-select-option *ngFor="let r of roles" [value]="r">{{ r }}</ion-select-option>
-      </ion-select>
-    </ion-item>
-
-    <ng-container *ngIf="!isEditMode || showPassword">
-      <app-password-control
-        formControlName="password"
-        [label]="isEditMode ? 'New password' : 'Password'"
-        [minLength]="6"
-        placeholder="{{ isEditMode ? 'Enter new password' : 'Enter password' }}">
-      </app-password-control>
-      <p *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="ion-text-center ion-color-danger">
-        Password is required and must be at least 6 characters.
-      </p>
+<ion-content [fullscreen]="true" class="ion-padding" [class.modal-content]="isModal">
+  <div class="page-container" [class.modal-body]="isModal">
+    <!-- Page view: card with form -->
+    <ng-container *ngIf="!isModal">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>User Details</ion-card-title>
+          <ion-card-subtitle>{{ isEditMode ? 'Update user information' : 'Create a new organization user' }}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <form id="userForm" [formGroup]="form" (ngSubmit)="onSubmit()">
+            <ng-container *ngTemplateOutlet="formFields"></ng-container>
+            <div class="action-bar">
+              <ion-button fill="outline" type="button" (click)="onCancel()">Cancel</ion-button>
+              <ion-button color="primary" type="submit" [disabled]="form.invalid">
+                {{ isEditMode ? 'Update User' : 'Create User' }}
+              </ion-button>
+            </div>
+          </form>
+        </ion-card-content>
+      </ion-card>
     </ng-container>
-    <ion-button *ngIf="isEditMode && !showPassword" fill="clear" type="button" (click)="togglePasswordField()">
-      Change password
-    </ion-button>
+    <!-- Modal: form only (footer has buttons) -->
+    <form *ngIf="isModal" id="userForm" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <ng-container *ngTemplateOutlet="formFields"></ng-container>
+    </form>
+  </div>
+</ion-content>
 
-    <div class="actions">
-      <ion-button type="submit" [disabled]="form.invalid">
-        {{ isEditMode ? 'Update' : 'Create' }}
-      </ion-button>
-      <ion-button fill="outline" type="button" (click)="onCancel()">
-        Cancel
-      </ion-button>
-    </div>
-  </form>
-</div>
+<ng-template #formFields>
+  <!-- Basic information -->
+  <ion-item-divider>
+            <ion-label>Basic information</ion-label>
+          </ion-item-divider>
+          <ion-grid class="form-grid">
+            <ion-row>
+              <ion-col size="12" size-md="6">
+                <ion-item>
+                  <ion-label position="stacked">First name</ion-label>
+                  <ion-input formControlName="firstName" type="text" placeholder="First name"></ion-input>
+                </ion-item>
+                @if (form.get('firstName')?.invalid && form.get('firstName')?.touched) {
+                  <p class="field-error">First name is required.</p>
+                }
+              </ion-col>
+              <ion-col size="12" size-md="6">
+                <ion-item>
+                  <ion-label position="stacked">Surname</ion-label>
+                  <ion-input formControlName="surname" type="text" placeholder="Surname"></ion-input>
+                </ion-item>
+                @if (form.get('surname')?.invalid && form.get('surname')?.touched) {
+                  <p class="field-error">Surname is required.</p>
+                }
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-md="6">
+                <app-email-control formControlName="email"></app-email-control>
+              </ion-col>
+              <ion-col size="12" size-md="6">
+                <ion-item>
+                  <ion-label position="stacked">Phone number</ion-label>
+                  <ion-input formControlName="phoneNumber" type="tel" placeholder="Phone number"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-md="6">
+                <ion-item>
+                  <ion-label position="stacked">Role</ion-label>
+                  <ion-select formControlName="role" placeholder="Select role" interface="popover">
+                    <ion-select-option *ngFor="let r of roles" [value]="r">{{ r }}</ion-select-option>
+                  </ion-select>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+
+          <!-- Security (only in add user) -->
+          @if (!isEditMode) {
+            <ion-item-divider>
+              <ion-label>Security</ion-label>
+            </ion-item-divider>
+            <ion-grid class="form-grid">
+              <ion-row>
+                <ion-col size="12" size-md="6">
+                  <app-password-control
+                    formControlName="password"
+                    label="Password"
+                    [minLength]="6"
+                    placeholder="Enter password">
+                  </app-password-control>
+                  @if (form.get('password')?.invalid && form.get('password')?.touched) {
+                    <p class="field-error">Password is required and must be at least 6 characters.</p>
+                  }
+                </ion-col>
+                <ion-col size="12" size-md="6">
+                  <ion-item>
+                    <ion-label position="stacked">Confirm password</ion-label>
+                    <ion-input
+                      formControlName="confirmPassword"
+                      type="password"
+                      placeholder="Confirm password">
+                    </ion-input>
+                  </ion-item>
+                  @if ((form.get('confirmPassword')?.invalid && form.get('confirmPassword')?.touched) || form.errors?.['confirmPasswordMismatch']) {
+                    <p class="field-error">{{ getConfirmPasswordError() }}</p>
+                  }
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          }
+
+          <!-- Address Details -->
+          <ion-item-divider>
+            <ion-label>Address Details</ion-label>
+          </ion-item-divider>
+          <ion-grid class="form-grid">
+            <ion-row>
+              <ion-col size="12">
+                <ion-item>
+                  <ion-label position="stacked">Address 1</ion-label>
+                  <ion-input formControlName="address1" type="text" placeholder="Address 1"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12">
+                <ion-item>
+                  <ion-label position="stacked">Address 2</ion-label>
+                  <ion-input formControlName="address2" type="text" placeholder="Address 2"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-col size="12" size-md="4">
+                <ion-item>
+                  <ion-label position="stacked">City</ion-label>
+                  <ion-input formControlName="city" type="text" placeholder="City"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-md="4">
+                <ion-item>
+                  <ion-label position="stacked">State</ion-label>
+                  <ion-input formControlName="state" type="text" placeholder="State"></ion-input>
+                </ion-item>
+              </ion-col>
+              <ion-col size="12" size-md="4">
+                <ion-item>
+                  <ion-label position="stacked">Pin code</ion-label>
+                  <ion-input formControlName="pinCode" type="text" placeholder="Pin code"></ion-input>
+                </ion-item>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+</ng-template>
+
+@if (isModal) {
+  <ion-footer class="ion-no-border modal-footer">
+    <ion-toolbar>
+      <ion-buttons slot="end" class="footer-actions">
+        <ion-button fill="outline" type="button" (click)="onCancel()">Cancel</ion-button>
+        <ion-button color="primary" type="submit" form="userForm" [disabled]="form.invalid">
+          {{ isEditMode ? 'Update User' : 'Create User' }}
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-footer>
+}

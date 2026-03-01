@@ -1,14 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { NgIf } from '@angular/common';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridReadyEvent, GridOptions } from 'ag-grid-community';
-import { IonContent, IonButton, IonIcon, IonSpinner } from '@ionic/angular/standalone';
-import { RouterLink } from '@angular/router';
+import { IonContent, IonButton, IonIcon, IonSpinner, ModalController } from '@ionic/angular/standalone';
 
 import { UserService } from '../../services/user.service';
 import { UserResponse } from '../../models/user-response.model';
 import { agGridTheme } from '../../../../shared/config/ag-grid-theme';
+import { AddEditUserPage } from '../add-edit-user/add-edit-user.page';
 
 @Component({
   selector: 'app-user-list',
@@ -26,7 +25,7 @@ import { agGridTheme } from '../../../../shared/config/ag-grid-theme';
 })
 export class UserListPage implements OnInit {
   private readonly userService = inject(UserService);
-  private readonly router = inject(Router);
+  private readonly modalController = inject(ModalController);
 
   activeMenu = 'Users';
   users: UserResponse[] = [];
@@ -80,8 +79,26 @@ export class UserListPage implements OnInit {
     // Grid ready; rowData is bound, no extra setup needed
   }
 
-  onEditUser(user: UserResponse): void {
-    this.router.navigate(['/users/edit', user.id], { state: { user } });
+  async navigateToAddUser(): Promise<void> {
+    const modal = await this.modalController.create({
+      component: AddEditUserPage,
+      componentProps: { userResponse: null, isModal: true },
+      cssClass: 'user-form-modal',
+    });
+    await modal.present();
+    const { data } = await modal.onDidDismiss();
+    if (data) this.loadUsers();
+  }
+
+  async onEditUser(user: UserResponse): Promise<void> {
+    const modal = await this.modalController.create({
+      component: AddEditUserPage,
+      componentProps: { userResponse: user, isModal: true },
+      cssClass: 'user-form-modal',
+    });
+    await modal.present();
+    const { data } = await modal.onDidDismiss();
+    if (data) this.loadUsers();
   }
 
 }

@@ -1,26 +1,102 @@
-.add-edit-user {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 1rem;
+.page-container {
+  max-width: 900px;
+  margin: 30px auto;
+}
 
-  h2 {
-    margin-bottom: 1rem;
+.breadcrumb {
+  padding-inline-start: 16px;
+  padding-inline-end: 16px;
+  min-height: 40px;
+}
+
+ion-card-header {
+  padding-bottom: 8px;
+}
+
+ion-card-content {
+  padding-top: 8px;
+}
+
+.form-grid {
+  padding: 0;
+  margin-bottom: 8px;
+
+  ion-row {
+    margin-bottom: 0;
+  }
+
+  ion-col {
+    padding: 0 4px 8px;
   }
 
   ion-item {
     --padding-start: 0;
     --inner-padding-end: 0;
-    margin-bottom: 0.5rem;
+    --min-height: 56px;
   }
+}
 
-  p.ion-color-danger {
-    font-size: 0.75rem;
-    margin: 0 0 0.5rem;
-  }
+.field-error {
+  font-size: 0.75rem;
+  color: var(--ion-color-danger);
+  margin: 0 0 4px 8px;
+}
 
-  .actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 1.5rem;
+ion-item-divider {
+  --padding-start: 0;
+  --padding-end: 0;
+  margin-top: 12px;
+  margin-bottom: 4px;
+  min-height: 32px;
+
+  ion-label {
+    font-weight: 600;
+    font-size: 0.9rem;
   }
+}
+
+.action-bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--ion-color-light-shade);
+}
+
+/* Modal: header subtitle */
+.header-subtitle-toolbar {
+  --min-height: 36px;
+  padding-top: 0;
+  padding-bottom: 8px;
+
+  .header-subtitle {
+    font-size: 0.875rem;
+    color: var(--ion-color-medium);
+    padding-inline: 16px;
+  }
+}
+
+/* Modal: scrollable content only, no extra padding */
+ion-content.modal-content {
+  --padding-bottom: 0;
+}
+
+.page-container.modal-body {
+  margin: 0;
+  max-width: none;
+  padding-bottom: 16px;
+}
+
+/* Modal: fixed footer with actions */
+ion-footer.modal-footer {
+  ion-toolbar {
+    --padding-start: 16px;
+    --padding-end: 16px;
+    --min-height: 56px;
+  }
+}
+
+.footer-actions {
+  gap: 12px;
 }
