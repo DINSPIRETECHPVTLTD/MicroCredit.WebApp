@@ -35,10 +35,10 @@ export class UserFormPage {
 
   onSave(_value: UserFormValue): void {
     // TODO: call user API (create/update), then navigate
-    this.router.navigate(['/dashboard/users']);
+    this.router.navigate(['/users']);
   }
 
   onCancel(): void {
-    this.router.navigate(['/dashboard/users']);
+    this.router.navigate(['/users']);
   }
 }

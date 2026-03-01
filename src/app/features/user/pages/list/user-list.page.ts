@@ -65,7 +65,6 @@ export class UserListPage implements OnInit {
     this.isLoading = true;
     this.userService.getUsers().subscribe({
       next: (list: UserResponse[]) => {
-        console.log(list);
         this.users = list;
         this.rowData = list;
         this.isLoading = false;
@@ -76,16 +75,12 @@ export class UserListPage implements OnInit {
     });
   }
 
-  onGridReady(_params: GridReadyEvent<UserResponse>): void {
-    // Grid ready; rowData is bound, no extra setup needed
-  }
-
   navigateToAddUser(): void {
-    this.router.navigate(['/dashboard/users/add']);
+    this.router.navigate(['/users/add']);
   }
 
   onEditUser(user: UserResponse): void {
-    this.router.navigate(['/dashboard/users/edit', user.id], { state: { user } });
+    this.router.navigate(['/users/edit', user.id], { state: { user } });
   }
 
 }

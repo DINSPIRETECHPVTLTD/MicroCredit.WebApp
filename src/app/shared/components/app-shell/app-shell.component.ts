@@ -76,8 +76,8 @@ export class AppShellComponent implements OnInit, OnDestroy {
 
   /** Build routerLink array from route relative to DASHBOARD_BASE. */
   getLink(route: string | undefined): string[] {
-    if (route == null || route === '') return [DASHBOARD_BASE];
-    return [DASHBOARD_BASE, ...route.split('/')];
+    if (route == null || route === '') return [''];
+    return ['', ...route.split('/')];
   }
 
   isDashboardRoot(route: string | undefined): boolean {

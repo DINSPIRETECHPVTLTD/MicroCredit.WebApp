@@ -1,7 +1,7 @@
 import { AppMenuItem, AppMode, AppRole } from '../models/menu.model';
 
-/** Base path for dashboard; menu routes are relative to this. */
-export const DASHBOARD_BASE = '/dashboard';
+/** Base path for app (no "dashboard" segment); menu routes are relative to this. */
+export const DASHBOARD_BASE = '';
 
 /** Central menu configuration. Routes are relative to DASHBOARD_BASE (e.g. 'users', 'master/data'). */
 export const APP_MENU: AppMenuItem[] = [
@@ -118,7 +118,7 @@ export function getExpandedKeyForUrl(
   url: string,
   base: string = DASHBOARD_BASE
 ): string | null {
-  const full = (r: string) => (r ? `${base}/${r}` : base);
+  const full = (r: string) => (r ? `${base ? base + '/' : '/'}${r}` : base || '/');
   for (const item of menu) {
     if (item.children?.length) {
       const childMatch = item.children.some(
