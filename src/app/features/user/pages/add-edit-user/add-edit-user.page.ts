@@ -44,11 +44,16 @@ import {
   IonFooter,
 } from '@ionic/angular/standalone';
 
+import { firstValueFrom } from 'rxjs';
+
 import { EmailControlComponent } from '../../../../shared/components/email-control';
 import { PasswordControlComponent } from '../../../../shared/components/password-control';
 import { User } from '../../models/user.model';
 import { UserFormValue } from '../../models/user-form-value.model';
 import { UserResponse } from '../../models/user-response.model';
+import { CreateUserRequest } from '../../models/create-user-request.model';
+import { UpdateUserRequest } from '../../models/update-user-request.model';
+import { UserService } from '../../services/user.service';
 
 function passwordMatchValidator(): ValidatorFn {
   return (form: AbstractControl): ValidationErrors | null => {
@@ -103,6 +108,7 @@ export class AddEditUserPage implements OnInit {
   private readonly router = inject(Router);
   private readonly fb = inject(FormBuilder);
   private readonly modalController = inject(ModalController);
+  private readonly userService = inject(UserService);
 
   @Input() isModal = false;
   @Input() userResponse: UserResponse | null = null;
@@ -110,6 +116,8 @@ export class AddEditUserPage implements OnInit {
   user: User | null = null;
   roles = ['Owner', 'Investor'];
   form!: FormGroup;
+  saving = false;
+  errorMessage: string | null = null;
 
   get isEditMode(): boolean {
     return !!this.user;
@@ -208,12 +216,40 @@ export class AddEditUserPage implements OnInit {
     } else {
       value.password = raw.password;
     }
-    // TODO: call user API (create/update)
-    if (this.isModal) {
-      this.modalController.dismiss(value);
-    } else {
-      this.router.navigate(['/users']);
-    }
+
+    this.errorMessage = null;
+    this.saving = true;
+    const baseRequest: UpdateUserRequest = {
+      firstName: raw.firstName,
+      surname: raw.surname,
+      role: raw.role,
+      email: raw.email,
+      phoneNumber: raw.phoneNumber || null,
+      address1: raw.address1 || null,
+      address2: raw.address2 || null,
+      city: raw.city || null,
+      state: raw.state || null,
+      pinCode: raw.pinCode || null,
+      level: (this.user as { level?: string })?.level ?? '',
+    };
+    const req$ = this.isEditMode && this.user
+      ? this.userService.updateUser(this.user.id, baseRequest)
+      : this.userService.createUser({ ...baseRequest, password: raw.password });
+
+    firstValueFrom(req$)
+      .then(() => {
+        if (this.isModal) {
+          this.modalController.dismiss(value);
+        } else {
+          this.router.navigate(['/users']);
+        }
+      })
+      .catch((err) => {
+        this.errorMessage = err?.error?.message ?? err?.message ?? 'Request failed.';
+      })
+      .finally(() => {
+        this.saving = false;
+      });
   }
 
   onCancel(): void {

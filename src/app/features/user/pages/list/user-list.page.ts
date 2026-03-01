@@ -1,13 +1,14 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { AgGridAngular } from 'ag-grid-angular';
-import { ColDef, GridReadyEvent, GridOptions } from 'ag-grid-community';
-import { IonContent, IonButton, IonIcon, IonSpinner, ModalController } from '@ionic/angular/standalone';
+import { ColDef, GridReadyEvent, GridOptions, RowDoubleClickedEvent } from 'ag-grid-community';
+import { IonContent, IonButton, IonIcon, IonSpinner, ModalController, AlertController } from '@ionic/angular/standalone';
 
 import { UserService } from '../../services/user.service';
 import { UserResponse } from '../../models/user-response.model';
 import { agGridTheme } from '../../../../shared/config/ag-grid-theme';
 import { AddEditUserPage } from '../add-edit-user/add-edit-user.page';
+import { UserListActionsCellComponent } from './user-list-actions-cell.component';
 
 @Component({
   selector: 'app-user-list',
@@ -21,11 +22,13 @@ import { AddEditUserPage } from '../add-edit-user/add-edit-user.page';
     IonIcon,
     IonSpinner,
     AgGridAngular,
+    UserListActionsCellComponent,
   ],
 })
 export class UserListPage implements OnInit {
   private readonly userService = inject(UserService);
   private readonly modalController = inject(ModalController);
+  private readonly alertController = inject(AlertController);
 
   activeMenu = 'Users';
   users: UserResponse[] = [];
@@ -38,6 +41,14 @@ export class UserListPage implements OnInit {
     { field: 'email', headerName: 'Email', flex: 1 },
     { field: 'role', headerName: 'Role', flex: 1 },
     { field: 'address', headerName: 'Address', flex: 1 },
+    {
+      headerName: 'Actions',
+      flex: 0,
+      width: 150,
+      sortable: false,
+      filter: false,
+      cellRenderer: UserListActionsCellComponent,
+    },
   ];
 
   defaultColDef: ColDef<UserResponse> = {
@@ -47,7 +58,12 @@ export class UserListPage implements OnInit {
   };
 
   gridOptions: GridOptions<UserResponse> = {
-    onRowDoubleClicked: (e) => e.data && this.onEditUser(e.data),
+    onRowDoubleClicked: (e: RowDoubleClickedEvent<UserResponse>) => e.data && this.onEditUser(e.data),
+    context: {
+      onEdit: (user: UserResponse) => this.onEditUser(user),
+      onResetPassword: (user: UserResponse) => this.onResetPassword(user),
+      onSetInactive: (user: UserResponse) => this.onSetInactive(user),
+    },
   };
 
   pagination = true;
@@ -101,4 +117,40 @@ export class UserListPage implements OnInit {
     if (data) this.loadUsers();
   }
 
+  async onResetPassword(user: UserResponse): Promise<void> {
+    const alert = await this.alertController.create({
+      header: 'Reset password',
+      message: `Send a password reset to ${user.email}?`,
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Reset',
+          handler: () => {
+            // TODO: call API to send reset password (e.g. POST /api/users/{id}/reset-password)
+            this.loadUsers();
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  async onSetInactive(user: UserResponse): Promise<void> {
+    const alert = await this.alertController.create({
+      header: 'Set user inactive',
+      message: `Set ${user.firstName} ${user.surname} as inactive? They will no longer be able to sign in.`,
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Set inactive',
+          role: 'destructive',
+          handler: () => {
+            // TODO: call API to set user inactive (e.g. PUT /api/users/{id}/inactive)
+            this.loadUsers();
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
 }

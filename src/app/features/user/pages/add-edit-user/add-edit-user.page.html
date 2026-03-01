@@ -36,11 +36,14 @@
         </ion-card-header>
         <ion-card-content>
           <form id="userForm" [formGroup]="form" (ngSubmit)="onSubmit()">
+            @if (errorMessage) {
+              <p class="field-error">{{ errorMessage }}</p>
+            }
             <ng-container *ngTemplateOutlet="formFields"></ng-container>
             <div class="action-bar">
-              <ion-button fill="outline" type="button" (click)="onCancel()">Cancel</ion-button>
-              <ion-button color="primary" type="submit" [disabled]="form.invalid">
-                {{ isEditMode ? 'Update User' : 'Create User' }}
+              <ion-button fill="outline" type="button" (click)="onCancel()" [disabled]="saving">Cancel</ion-button>
+              <ion-button color="primary" type="submit" [disabled]="form.invalid || saving">
+                {{ saving ? 'Saving…' : (isEditMode ? 'Update User' : 'Create User') }}
               </ion-button>
             </div>
           </form>
@@ -183,12 +186,15 @@
 </ng-template>
 
 @if (isModal) {
+  @if (errorMessage) {
+    <p class="field-error ion-padding">{{ errorMessage }}</p>
+  }
   <ion-footer class="ion-no-border modal-footer">
     <ion-toolbar>
       <ion-buttons slot="end" class="footer-actions">
-        <ion-button fill="outline" type="button" (click)="onCancel()">Cancel</ion-button>
-        <ion-button color="primary" type="submit" form="userForm" [disabled]="form.invalid">
-          {{ isEditMode ? 'Update User' : 'Create User' }}
+        <ion-button fill="outline" type="button" (click)="onCancel()" [disabled]="saving">Cancel</ion-button>
+        <ion-button color="primary" type="submit" form="userForm" [disabled]="form.invalid || saving">
+          {{ saving ? 'Saving…' : (isEditMode ? 'Update User' : 'Create User') }}
         </ion-button>
       </ion-buttons>
     </ion-toolbar>
