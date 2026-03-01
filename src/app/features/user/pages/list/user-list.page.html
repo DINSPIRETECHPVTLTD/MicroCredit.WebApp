@@ -1,0 +1,49 @@
+<ion-content [fullscreen]="true" class="ion-padding">
+    <!-- Users List -->
+    <div class="users-list-container">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h2>All Users</h2>
+        <ion-button (click)="openAddUserModal()">
+          <ion-icon name="add-outline" slot="start"></ion-icon>
+          Add User
+        </ion-button>
+      </div>
+
+      <!-- AG Grid -->
+      <div *ngIf="isLoading" style="text-align: center; padding: 20px;">
+        <ion-spinner></ion-spinner>
+        <p>Loading users...</p>
+      </div>
+
+      <div *ngIf="!isLoading && users.length === 0" class="empty-state">
+        <ion-icon name="people-outline" size="large"></ion-icon>
+        <p>No users found</p>
+        <p style="font-size: 12px; margin-top: 8px; color: var(--ion-color-medium);">
+          Click "Add User" to create a new user
+        </p>
+      </div>
+
+      <div *ngIf="!isLoading && users.length > 0" class="users-grid">
+        <ag-grid-angular
+          class="ag-theme-alpine"
+          style="width: 100%; height: 60vh;"
+          [rowData]="rowData"
+          [columnDefs]="columnDefs"
+          [gridOptions]="gridOptions"
+          [defaultColDef]="defaultColDef"
+          [pagination]="pagination"
+          [paginationPageSize]="paginationPageSize"
+          [paginationPageSizeSelector]="paginationPageSizeSelector"
+          (gridReady)="onGridReady($event)">
+        </ag-grid-angular>
+      </div>
+    </div>
+
+    <app-add-edit-user
+      *ngIf="showForm"
+      [user]="editingUser"
+      [roles]="['Admin', 'User', 'Staff']"
+      (save)="onSaveUser($event)"
+      (cancel)="onCancelUser()">
+    </app-add-edit-user>
+  </ion-content>

@@ -1,5 +1,7 @@
-import { Component, inject } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { Component, inject, OnInit, OnDestroy } from '@angular/core';
+import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 import { AuthService } from '../../auth/services/auth.service';
 import { AppShellComponent, AppShellOrgInfo, AppShellBranchInfo } from '../../../shared/components/app-shell';
 
@@ -9,9 +11,10 @@ import { AppShellComponent, AppShellOrgInfo, AppShellBranchInfo } from '../../..
   standalone: true,
   imports: [RouterOutlet, AppShellComponent],
 })
-export class DashboardShellComponent {
+export class DashboardShellComponent implements OnInit, OnDestroy {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private routeSub?: Subscription;
 
   /** Organization from session (login / navigate-to-org). */
   get organization(): AppShellOrgInfo | null {
@@ -46,6 +49,7 @@ export class DashboardShellComponent {
     if (menu === 'Master') this.showMasterSubmenu = !this.showMasterSubmenu;
     if (menu === 'Funds') this.showFundsSubmenu = !this.showFundsSubmenu;
     if (menu === 'Loan') this.showLoanSubmenu = !this.showLoanSubmenu;
+    if (menu === 'Users') this.router.navigate(['/dashboard/users']);
   }
 
   selectSubmenu(submenu: string): void {
@@ -68,5 +72,22 @@ export class DashboardShellComponent {
   logout(): void {
     this.auth.logout();
     this.router.navigate(['/auth/login']);
+  }
+
+  ngOnInit(): void {
+    this.syncActiveMenuFromRoute(this.router.url);
+    this.routeSub = this.router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe((e) => this.syncActiveMenuFromRoute(e.url));
+  }
+
+  ngOnDestroy(): void {
+    this.routeSub?.unsubscribe();
+  }
+
+  private syncActiveMenuFromRoute(url: string): void {
+    if (url.includes('/users')) {
+      this.activeMenu = 'Users';
+    }
   }
 }

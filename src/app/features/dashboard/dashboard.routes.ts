@@ -11,6 +11,11 @@ export const dashboardRoutes: Routes = [
         loadComponent: () =>
           import('./pages/dashboard/dashboard.page').then((m) => m.DashboardPage),
       },
+      {
+        path: 'users',
+        loadChildren: () =>
+          import('../user/user.routes').then((m) => m.userRoutes),
+      },
     ],
   },
 ];

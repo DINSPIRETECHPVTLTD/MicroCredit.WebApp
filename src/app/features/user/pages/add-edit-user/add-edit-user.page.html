@@ -1,0 +1,54 @@
+<div class="add-edit-user">
+  <h2>{{ title }}</h2>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <app-email-control formControlName="email"></app-email-control>
+
+    <ion-item>
+      <ion-label position="stacked">First name</ion-label>
+      <ion-input formControlName="firstName" type="text" placeholder="First name"></ion-input>
+    </ion-item>
+    <p *ngIf="form.get('firstName')?.invalid && form.get('firstName')?.touched" class="ion-text-center ion-color-danger">
+      First name is required.
+    </p>
+
+    <ion-item>
+      <ion-label position="stacked">Last name</ion-label>
+      <ion-input formControlName="lastName" type="text" placeholder="Last name"></ion-input>
+    </ion-item>
+    <p *ngIf="form.get('lastName')?.invalid && form.get('lastName')?.touched" class="ion-text-center ion-color-danger">
+      Last name is required.
+    </p>
+
+    <ion-item>
+      <ion-label position="stacked">Role</ion-label>
+      <ion-select formControlName="role" placeholder="Select role" interface="action-sheet">
+        <ion-select-option *ngFor="let r of roles" [value]="r">{{ r }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ng-container *ngIf="!isEditMode || showPassword">
+      <app-password-control
+        formControlName="password"
+        [label]="isEditMode ? 'New password' : 'Password'"
+        [minLength]="6"
+        placeholder="{{ isEditMode ? 'Enter new password' : 'Enter password' }}">
+      </app-password-control>
+      <p *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="ion-text-center ion-color-danger">
+        Password is required and must be at least 6 characters.
+      </p>
+    </ng-container>
+    <ion-button *ngIf="isEditMode && !showPassword" fill="clear" type="button" (click)="togglePasswordField()">
+      Change password
+    </ion-button>
+
+    <div class="actions">
+      <ion-button type="submit" [disabled]="form.invalid">
+        {{ isEditMode ? 'Update' : 'Create' }}
+      </ion-button>
+      <ion-button fill="outline" type="button" (click)="onCancel()">
+        Cancel
+      </ion-button>
+    </div>
+  </form>
+</div>
