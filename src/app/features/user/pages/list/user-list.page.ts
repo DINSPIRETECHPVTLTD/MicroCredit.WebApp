@@ -61,6 +61,7 @@ export class UserListPage implements OnInit {
     this.isLoading = true;
     this.userService.getUsers().subscribe({
       next: (list: UserResponse[]) => {
+        console.log(list);
         this.users = list;
         this.rowData = list;
         this.isLoading = false;

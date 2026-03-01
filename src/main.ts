@@ -1,3 +1,5 @@
+import { ModuleRegistry, AllCommunityModule } from 'ag-grid-community';
+
 import { bootstrapApplication } from '@angular/platform-browser';
 import { RouteReuseStrategy, provideRouter, withPreloading, PreloadAllModules } from '@angular/router';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
@@ -6,6 +8,9 @@ import { APP_BASE_HREF } from '@angular/common';
 import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
 
 import { routes } from './app/app.routes';
+
+/** AG Grid v31+ requires registering modules once before any grid is used. */
+ModuleRegistry.registerModules([AllCommunityModule]);
 import { AppComponent } from './app/app.component';
 import { AuthService } from './app/features/auth/services/auth.service';
 import { AUTH_INTERCEPTOR_PROVIDER } from './app/core/interceptors/auth.interceptor';
