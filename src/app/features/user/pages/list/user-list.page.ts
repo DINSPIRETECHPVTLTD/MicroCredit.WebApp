@@ -5,10 +5,8 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridReadyEvent, GridOptions } from 'ag-grid-community';
 import { IonContent, IonButton, IonIcon, IonSpinner } from '@ionic/angular/standalone';
 
-import { AddEditUserPage } from '../add-edit-user/add-edit-user.page';
 import { UserService } from '../../services/user.service';
-import { User } from '../../models/user.model';
-import { UserFormValue } from '../../models/user-form-value.model';
+import { UserResponse } from '../../models/user-response.model';
 
 @Component({
   selector: 'app-user-list',
@@ -22,7 +20,6 @@ import { UserFormValue } from '../../models/user-form-value.model';
     IonIcon,
     IonSpinner,
     AgGridAngular,
-    AddEditUserPage,
   ],
 })
 export class UserListPage implements OnInit {
@@ -30,27 +27,25 @@ export class UserListPage implements OnInit {
   private readonly router = inject(Router);
 
   activeMenu = 'Users';
-  users: User[] = [];
-  rowData: User[] = [];
+  users: UserResponse[] = [];
+  rowData: UserResponse[] = [];
   isLoading = false;
-  showForm = false;
-  editingUser: User | null = null;
 
-  columnDefs: ColDef<User>[] = [
+  columnDefs: ColDef<UserResponse>[] = [
     { field: 'firstName', headerName: 'First Name', flex: 1 },
-    { field: 'lastName', headerName: 'Last Name', flex: 1 },
+    { field: 'surname', headerName: 'Surname', flex: 1 },
     { field: 'email', headerName: 'Email', flex: 1 },
     { field: 'role', headerName: 'Role', flex: 1 },
     { field: 'address', headerName: 'Address', flex: 1 },
   ];
 
-  defaultColDef: ColDef<User> = {
+  defaultColDef: ColDef<UserResponse> = {
     sortable: true,
     filter: true,
     resizable: true,
   };
 
-  gridOptions: GridOptions<User> = {
+  gridOptions: GridOptions<UserResponse> = {
     onRowDoubleClicked: (e) => e.data && this.onEditUser(e.data),
   };
 
@@ -64,8 +59,8 @@ export class UserListPage implements OnInit {
 
   loadUsers(): void {
     this.isLoading = true;
-    this.userService.getUsersAsUser().subscribe({
-      next: (list: User[]) => {
+    this.userService.getUsers().subscribe({
+      next: (list: UserResponse[]) => {
         this.users = list;
         this.rowData = list;
         this.isLoading = false;
@@ -76,38 +71,16 @@ export class UserListPage implements OnInit {
     });
   }
 
-  onGridReady(_params: GridReadyEvent<User>): void {
+  onGridReady(_params: GridReadyEvent<UserResponse>): void {
     // Grid ready; rowData is bound, no extra setup needed
   }
 
-  openAddUserModal(): void {
-    this.editingUser = null;
-    this.showForm = true;
+  navigateToAddUser(): void {
+    this.router.navigate(['/dashboard/users/add']);
   }
 
-  onEditUser(user: User): void {
-    this.editingUser = user;
-    this.showForm = true;
-  }
-
-  onSaveUser(value: UserFormValue): void {
-    // TODO: call user API (create or update), then refresh list and close form
-    console.log('Save user', value);
-    this.showForm = false;
-    this.editingUser = null;
-    this.loadUsers();
-  }
-
-  onCancelUser(): void {
-    this.showForm = false;
-    this.editingUser = null;
-  }
-
-  onMenuChange(menu: string): void {
-    this.activeMenu = menu;
-    if (menu === 'Dashboard') {
-      this.router.navigate(['/dashboard']);
-    }
+  onEditUser(user: UserResponse): void {
+    this.router.navigate(['/dashboard/users/edit', user.id], { state: { user } });
   }
 
 }

@@ -3,7 +3,7 @@
     <div class="users-list-container">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
         <h2>All Users</h2>
-        <ion-button (click)="openAddUserModal()">
+        <ion-button (click)="navigateToAddUser()">
           <ion-icon name="add-outline" slot="start"></ion-icon>
           Add User
         </ion-button>
@@ -38,12 +38,4 @@
         </ag-grid-angular>
       </div>
     </div>
-
-    <app-add-edit-user
-      *ngIf="showForm"
-      [user]="editingUser"
-      [roles]="['Admin', 'User', 'Staff']"
-      (save)="onSaveUser($event)"
-      (cancel)="onCancelUser()">
-    </app-add-edit-user>
   </ion-content>

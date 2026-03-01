@@ -9,11 +9,11 @@
       </p>
     </div>
     <div class="header-center">
-      <h2 class="header-branch-name" *ngIf="isBranchMode && selectedBranch">{{ selectedBranch.name }}</h2>
+      <h2 class="header-branch-name" *ngIf="mode === 'BRANCH' && selectedBranch">{{ selectedBranch.name }}</h2>
     </div>
     <div class="user-section">
-      <span *ngIf="isOrgOwner" class="mode-badge" [class.mode-org]="isOrgMode" [class.mode-branch]="isBranchMode">
-        {{ isOrgMode ? 'Org Mode' : 'Branch Mode' }}
+      <span class="mode-badge" [class.mode-org]="mode === 'ORG'" [class.mode-branch]="mode === 'BRANCH'">
+        {{ mode === 'ORG' ? 'Org Mode' : 'Branch Mode' }}
       </span>
       <div class="user-info">
         <ion-icon name="person-circle-outline" class="user-icon"></ion-icon>
@@ -30,93 +30,56 @@
 
 <div class="app-layout">
   <aside class="sidebar">
-    <nav class="nav-sidebar" *ngIf="isOrgMode">
-      <button
-        class="nav-item"
-        [class.active]="activeMenu === 'Dashboard'"
-        (click)="onMenuChange('Dashboard')">
-        Dashboard
-      </button>
-      <button
-        class="nav-item"
-        [class.active]="activeMenu === 'Info'"
-        (click)="onMenuChange('Info')">
-        Org Info
-      </button>
-      <button
-        class="nav-item"
-        [class.active]="activeMenu === 'Users' || activeMenu === 'All Users' || activeMenu === 'Approvals'"
-        (click)="onMenuChange('Users')">
-        Users
-      </button>
-      <button
-        class="nav-item"
-        [class.active]="activeMenu === 'Branches' || activeMenu === 'All Branches'"
-        (click)="onMenuChange('Branches')">
-        Branches
-      </button>
-      <div class="nav-item-container">
-        <button
-          class="nav-item"
-          [class.active]="activeMenu === 'Master' || activeMenu === 'Master Data' || activeMenu === 'Payment Terms'"
-          (click)="onMenuChange('Master')">
-          <span>Master</span>
-          <ion-icon [name]="showMasterSubmenu ? 'chevron-forward-outline' : 'chevron-down-outline'" class="submenu-icon"></ion-icon>
-        </button>
-        <div class="submenu-vertical" *ngIf="showMasterSubmenu">
-          <button class="submenu-item" [class.active]="activeMenu === 'Master Data'" (click)="onSubmenuSelect('Master Data')">Master Data</button>
-          <button class="submenu-item" [class.active]="activeMenu === 'Payment Terms'" (click)="onSubmenuSelect('Payment Terms')">Payment Terms</button>
-        </div>
-      </div>
-      <div class="nav-item-container">
-        <button
-          class="nav-item"
-          [class.active]="activeMenu === 'Funds' || activeMenu === 'Investments' || activeMenu === 'Funds Transfer'"
-          (click)="onMenuChange('Funds')">
-          <span>Funds</span>
-          <ion-icon [name]="showFundsSubmenu ? 'chevron-forward-outline' : 'chevron-down-outline'" class="submenu-icon"></ion-icon>
-        </button>
-        <div class="submenu-vertical" *ngIf="showFundsSubmenu">
-          <button class="submenu-item" [class.active]="activeMenu === 'Investments'" (click)="onSubmenuSelect('Investments')">Investments</button>
-          <button class="submenu-item" [class.active]="activeMenu === 'Ledger Balances'" (click)="onSubmenuSelect('Ledger Balances')">Ledger Balances</button>
-        </div>
-      </div>
-    </nav>
-
-    <nav class="nav-sidebar" *ngIf="isBranchMode">
-      <a *ngIf="isOrgOwner" class="nav-item return-to-org-item" (click)="onReturnToOrgMode()" href="javascript:void(0)">
+    <nav class="nav-sidebar">
+      <a
+        *ngIf="showReturnToOrg"
+        class="nav-item return-to-org-item"
+        (click)="onReturnToOrgMode(); $event.preventDefault()"
+        href="javascript:void(0)">
         <ion-icon name="arrow-back-outline" class="return-icon"></ion-icon>
         Return back to Org Mode
       </a>
-      <button
-        class="nav-item"
-        [class.active]="activeMenu === 'Dashboard' || activeMenu === 'My View'"
-        (click)="onMenuChange(isStaff ? 'My View' : 'Dashboard')">
-        Dashboard
-      </button>
-      <button class="nav-item" [class.active]="activeMenu === 'Centers'" (click)="onMenuChange('Centers')">Centers</button>
-      <button class="nav-item" [class.active]="activeMenu === 'POCs'" (click)="onMenuChange('POCs')">POCs</button>
-      <button class="nav-item" [class.active]="activeMenu === 'Staff'" (click)="onMenuChange('Staff')" *ngIf="!isBranchUser">Staff</button>
-      <button class="nav-item" [class.active]="activeMenu === 'Members'" (click)="onMenuChange('Members')">Members</button>
-      <div class="nav-item-container">
-        <button
-          class="nav-item"
-          [class.active]="activeMenu === 'Loan' || activeMenu === 'Add Loan' || activeMenu === 'Manage Loan'"
-          (click)="onMenuChange('Loan')">
-          <span>Loans</span>
-          <ion-icon [name]="showLoanSubmenu ? 'chevron-forward-outline' : 'chevron-down-outline'" class="submenu-icon"></ion-icon>
-        </button>
-        <div class="submenu-vertical" *ngIf="showLoanSubmenu">
-          <button class="submenu-item" [class.active]="activeMenu === 'Add Loan'" (click)="onSubmenuSelect('Add Loan')">Add Loan</button>
-          <button class="submenu-item" [class.active]="activeMenu === 'Manage Loan'" (click)="onSubmenuSelect('Manage Loan')">Manage Loan</button>
-        </div>
-      </div>
-      <button
-        class="nav-item"
-        [class.active]="activeMenu === 'Recovery Posting'"
-        (click)="onMenuChange('Recovery Posting')">
-        Recovery Posting
-      </button>
+
+      <ng-container *ngFor="let menu of filteredMenu">
+        <!-- Leaf item with route -->
+        @if (menu.route !== undefined && !menu.children?.length) {
+          <a
+            class="nav-item"
+            [routerLink]="getLink(menu.route)"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: isDashboardRoot(menu.route) }">
+            {{ menu.label }}
+          </a>
+        }
+
+        <!-- Parent with children (expand/collapse) -->
+        @if (menu.children?.length) {
+          <div class="nav-item-container">
+            <button
+              type="button"
+              class="nav-item"
+              [class.active]="isExpanded(menu.key)"
+              (click)="toggleExpanded(menu.key)">
+              <span>{{ menu.label }}</span>
+              <ion-icon
+                [name]="isExpanded(menu.key) ? 'chevron-down-outline' : 'chevron-forward-outline'"
+                class="submenu-icon"></ion-icon>
+            </button>
+            @if (isExpanded(menu.key)) {
+              <div class="submenu-vertical">
+                @for (child of menu.children; track child.key) {
+                  <a
+                    class="submenu-item"
+                    [routerLink]="getLink(child.route)"
+                    routerLinkActive="active">
+                    {{ child.label }}
+                  </a>
+                }
+              </div>
+            }
+          </div>
+        }
+      </ng-container>
     </nav>
   </aside>
   <main class="main-content">

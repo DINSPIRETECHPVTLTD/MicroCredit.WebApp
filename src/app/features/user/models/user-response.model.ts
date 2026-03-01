@@ -5,5 +5,5 @@ export interface UserResponse {
   surname: string;
   email: string;
   role: string;
-  addresss: string; // matches API property name
+  address: string; // matches API property name
 }

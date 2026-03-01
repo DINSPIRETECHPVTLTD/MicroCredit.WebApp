@@ -1,4 +1,0 @@
-{
-  "/auth": { "target": "https://localhost:7119", "secure": false, "changeOrigin": true },
-  "/User": { "target": "https://localhost:7119", "secure": false, "changeOrigin": true }
-}

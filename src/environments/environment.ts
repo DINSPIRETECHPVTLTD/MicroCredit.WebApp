@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  // Use empty string so requests go to same origin (localhost:4200) and proxy.conf.json forwards to the API
-  apiUrl: '',
+  /** API base URL from environment. Backend must allow CORS for this app (e.g. Access-Control-Allow-Origin: http://localhost:4200 in dev). */
+  apiUrl: 'https://localhost:7119/',
 };
 
 /*
