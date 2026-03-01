@@ -18,9 +18,7 @@
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
 
-/* AG Grid */
-@import "ag-grid-community/styles/ag-grid.css";
-@import "ag-grid-community/styles/ag-theme-alpine.css";
+/* AG Grid: theme applied via Theming API (ag-grid-theme.ts) - do not import legacy CSS */
 
 /* Optional CSS utils that can be commented out */
 @import "@ionic/angular/css/padding.css";
@@ -39,3 +37,166 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+/* ========== Styles from MCS repo (https://github.com/DINSPIRETECHPVTLTD/MCS) ========== */
+
+/* Better toast visibility */
+.app-toast::part(container) {
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.app-toast::part(message) {
+  letter-spacing: 0.2px;
+}
+
+.app-toast--success::part(container) {
+  background: #1b5e20;
+  color: #ffffff;
+}
+
+.app-toast--cleared::part(container) {
+  background: #0d47a1;
+  color: #ffffff;
+}
+
+.app-toast--danger::part(container) {
+  background: #b71c1c;
+  color: #ffffff;
+}
+
+/* Common AG Grid styles - applied to all pages with grids */
+.centers-grid,
+.branches-grid,
+.users-grid,
+.pocs-grid,
+.members-grid,
+.staff-grid,
+.loan-grid {
+  .ag-header-cell {
+    border-right: 1px solid #d0d0d0 !important;
+    border-bottom: 1px solid #d0d0d0 !important;
+
+    &:first-child {
+      border-left: 1px solid #d0d0d0 !important;
+    }
+  }
+
+  .ag-cell {
+    border-right: 1px solid #d0d0d0 !important;
+    border-bottom: 1px solid #d0d0d0 !important;
+
+    &:first-child {
+      border-left: 1px solid #d0d0d0 !important;
+    }
+  }
+
+  .ag-header-row {
+    border-top: 1px solid #d0d0d0 !important;
+  }
+
+  .ag-row {
+    border-top: 1px solid #d0d0d0 !important;
+  }
+
+  .ag-root-wrapper {
+    border: 1px solid #d0d0d0 !important;
+  }
+}
+
+/* Actions cell and buttons - apply globally to all AG Grid instances */
+.actions-cell {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  flex-wrap: wrap;
+}
+
+.ag-btn {
+  appearance: none;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.ag-edit {
+  background: var(--ion-color-primary);
+  color: white;
+
+  &:hover {
+    background: var(--ion-color-primary-shade);
+    transform: translateY(-1px);
+  }
+}
+
+.ag-delete {
+  background: var(--ion-color-danger);
+  color: white;
+
+  &:hover {
+    background: var(--ion-color-danger-shade);
+    transform: translateY(-1px);
+  }
+}
+
+.ag-navigate {
+  background: var(--ion-color-success);
+  color: white;
+
+  &:hover {
+    background: var(--ion-color-success-shade);
+    transform: translateY(-1px);
+  }
+}
+
+/* Common page container styles */
+.page-list-container,
+.centers-list-container,
+.branches-list-container,
+.users-list-container,
+.staff-list-container,
+.pocs-list-container,
+.members-list-container,
+.loan-list-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  h2 {
+    margin: 8px 0 16px 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--ion-color-primary);
+  }
+}
+
+/* Common empty state styles */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--ion-color-medium);
+
+  ion-icon {
+    margin-bottom: 16px;
+    opacity: 0.5;
+  }
+
+  p {
+    margin: 0;
+    font-size: 16px;
+  }
+}
+
+/* Master Data Add/Edit modal: tall enough so form + footer are visible and content scrolls */
+ion-modal.add-master-data-modal {
+  --height: 90%;
+  --max-height: 90vh;
+  --border-radius: 12px;
+}

@@ -7,6 +7,7 @@ import { IonContent, IonButton, IonIcon, IonSpinner } from '@ionic/angular/stand
 
 import { UserService } from '../../services/user.service';
 import { UserResponse } from '../../models/user-response.model';
+import { agGridTheme } from '../../../../shared/config/ag-grid-theme';
 
 @Component({
   selector: 'app-user-list',
@@ -52,6 +53,9 @@ export class UserListPage implements OnInit {
   pagination = true;
   paginationPageSize = 20;
   paginationPageSizeSelector = [10, 20, 50, 100];
+
+  /** Shared AG Grid theme (Quartz with custom params). */
+  agGridTheme = agGridTheme;
 
   ngOnInit(): void {
     this.loadUsers();
