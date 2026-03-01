@@ -4,6 +4,7 @@ import { NgIf } from '@angular/common';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridReadyEvent, GridOptions } from 'ag-grid-community';
 import { IonContent, IonButton, IonIcon, IonSpinner } from '@ionic/angular/standalone';
+import { RouterLink } from '@angular/router';
 
 import { UserService } from '../../services/user.service';
 import { UserResponse } from '../../models/user-response.model';
@@ -75,8 +76,8 @@ export class UserListPage implements OnInit {
     });
   }
 
-  navigateToAddUser(): void {
-    this.router.navigate(['/users/add']);
+  onGridReady(_params: GridReadyEvent<UserResponse>): void {
+    // Grid ready; rowData is bound, no extra setup needed
   }
 
   onEditUser(user: UserResponse): void {
