@@ -1,6 +1,6 @@
 import { Component, Input, Optional, Self, signal } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
-import { IonItem, IonInput, IonButton, IonIcon } from '@ionic/angular/standalone';
+import { IonItem, IonLabel, IonInput, IonButton, IonIcon } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   templateUrl: './password-control.component.html',
   styleUrls: ['./password-control.component.scss'],
-  imports: [CommonModule, ReactiveFormsModule, IonItem, IonInput, IonButton, IonIcon],
+  imports: [CommonModule, ReactiveFormsModule, IonItem, IonLabel, IonInput, IonButton, IonIcon],
 })
 export class PasswordControlComponent implements ControlValueAccessor {
   @Input() label = 'Password';

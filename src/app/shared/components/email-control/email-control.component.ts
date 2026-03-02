@@ -1,6 +1,6 @@
 import { Component, Input, Optional, Self } from '@angular/core';
 import { ControlValueAccessor, NgControl, ReactiveFormsModule } from '@angular/forms';
-import { IonItem, IonInput } from '@ionic/angular/standalone';
+import { IonItem, IonLabel, IonInput } from '@ionic/angular/standalone';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   templateUrl: './email-control.component.html',
   styleUrls: ['./email-control.component.scss'],
-  imports: [CommonModule, ReactiveFormsModule, IonItem, IonInput],
+  imports: [CommonModule, ReactiveFormsModule, IonItem, IonLabel, IonInput],
 })
 export class EmailControlComponent implements ControlValueAccessor {
   @Input() label = 'Email';

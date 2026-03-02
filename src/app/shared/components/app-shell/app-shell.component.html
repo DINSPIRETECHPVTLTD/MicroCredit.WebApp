@@ -13,7 +13,7 @@
     </div>
     <div class="user-section">
       <span class="mode-badge" [class.mode-org]="mode === 'ORG'" [class.mode-branch]="mode === 'BRANCH'">
-        {{ mode === 'ORG' ? 'Org Mode' : 'Branch Mode' }}
+        {{ mode === 'ORG' ? 'ORG MODE' : 'BRANCH MODE' }}
       </span>
       <div class="user-info">
         <ion-icon name="person-circle-outline" class="user-icon"></ion-icon>
@@ -22,7 +22,7 @@
       </div>
       <ion-button fill="clear" class="logout-btn" (click)="onLogout()">
         <ion-icon name="log-out-outline" slot="start"></ion-icon>
-        Log Out
+        LOG OUT
       </ion-button>
     </div>
   </div>

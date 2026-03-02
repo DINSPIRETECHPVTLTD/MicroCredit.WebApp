@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
-import { IonButton, IonIcon } from '@ionic/angular/standalone';
 
 import { UserResponse } from '../../models/user-response.model';
 
@@ -14,33 +13,22 @@ export interface UserListActionsContext {
 @Component({
   selector: 'app-user-list-actions-cell',
   standalone: true,
-  imports: [IonButton, IonIcon],
+  imports: [],
   template: `
     <div class="user-actions-cell">
-      <ion-button fill="clear" size="small" (click)="onEdit()" title="Edit">
-        <ion-icon name="pencil-outline"></ion-icon>
-      </ion-button>
-      <ion-button fill="clear" size="small" (click)="onResetPassword()" title="Reset password">
-        <ion-icon name="key-outline"></ion-icon>
-      </ion-button>
-      <ion-button fill="clear" size="small" color="warning" (click)="onSetInactive()" title="Set inactive">
-        <ion-icon name="person-remove-outline"></ion-icon>
-      </ion-button>
+      <button type="button" class="ag-btn ag-edit" (click)="onEdit()" title="Edit">Edit</button>
+      <button type="button" class="ag-btn ag-reset-password" (click)="onResetPassword()" title="Reset Password">Reset Password</button>
+      <button type="button" class="ag-btn ag-inactive" (click)="onSetInactive()" title="Inactive">Inactive</button>
     </div>
   `,
   styles: [
     `
       .user-actions-cell {
         display: flex;
-        gap: 2px;
+        gap: 6px;
         align-items: center;
         height: 100%;
-      }
-      .user-actions-cell ion-button {
-        --padding-start: 6px;
-        --padding-end: 6px;
-        margin: 0;
-        min-height: 28px;
+        flex-wrap: wrap;
       }
     `,
   ],

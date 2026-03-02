@@ -36,15 +36,23 @@ export class UserListPage implements OnInit {
   isLoading = false;
 
   columnDefs: ColDef<UserResponse>[] = [
-    { field: 'firstName', headerName: 'First Name', flex: 1 },
-    { field: 'surname', headerName: 'Surname', flex: 1 },
+    { field: 'id', headerName: 'User', flex: 0, width: 80 },
+    {
+      headerName: 'Full Name',
+      flex: 1,
+      valueGetter: (params) => {
+        const d = params.data;
+        if (!d) return '';
+        return [d.firstName, d.surname].filter(Boolean).join(' ');
+      },
+    },
     { field: 'email', headerName: 'Email', flex: 1 },
     { field: 'role', headerName: 'Role', flex: 1 },
     { field: 'address', headerName: 'Address', flex: 1 },
     {
       headerName: 'Actions',
       flex: 0,
-      width: 150,
+      width: 280,
       sortable: false,
       filter: false,
       cellRenderer: UserListActionsCellComponent,

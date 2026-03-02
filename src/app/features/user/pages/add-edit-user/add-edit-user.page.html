@@ -1,16 +1,17 @@
 <ion-header>
   <ion-toolbar>
-    <ion-buttons slot="start">
-      @if (isModal) {
+    @if (!isModal) {
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/users" text=""></ion-back-button>
+      </ion-buttons>
+    }
+    @if (isModal) {
+      <ion-title>{{ isEditMode ? 'Update user information' : 'Create a new organization user' }}</ion-title>
+      <ion-buttons slot="end">
         <ion-button (click)="onCancel()">
           <ion-icon name="close"></ion-icon>
         </ion-button>
-      } @else {
-        <ion-back-button defaultHref="/users" text=""></ion-back-button>
-      }
-    </ion-buttons>
-    @if (isModal) {
-      <ion-title>{{ isEditMode ? 'Update user information' : 'Create a new organization user' }}</ion-title>
+      </ion-buttons>
     } @else {
       <ion-title>{{ pageTitle }}</ion-title>
     }
@@ -116,7 +117,7 @@
                 <ion-col size="12" size-md="6">
                   <app-password-control
                     formControlName="password"
-                    label="Password"
+                    label="Security password"
                     [minLength]="6"
                     placeholder="Enter password">
                   </app-password-control>

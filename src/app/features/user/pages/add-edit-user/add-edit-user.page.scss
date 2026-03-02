@@ -32,7 +32,15 @@ ion-card-content {
   ion-item {
     --padding-start: 0;
     --inner-padding-end: 0;
-    --min-height: 56px;
+    /* Stacked labels need more height so label sits above input, not under it */
+    --min-height: 88px;
+    align-items: flex-start;
+  }
+
+  /* Space between stacked label and input */
+  ion-item ion-label[position="stacked"] {
+    margin-bottom: 4px;
+    min-height: 1.5em;
   }
 }
 
@@ -77,20 +85,65 @@ ion-item-divider {
   }
 }
 
-/* Modal: scrollable content only, no extra padding */
+/* Modal: white background and scrollable content */
 ion-content.modal-content {
+  --background: #ffffff;
   --padding-bottom: 0;
 }
 
 .page-container.modal-body {
   margin: 0;
   max-width: none;
-  padding-bottom: 16px;
+  /* Enough padding at bottom so last row (City, State, Pin code) and content stay above fixed footer */
+  padding-bottom: 120px;
+
+  /* Force light theme: white everywhere, labels black */
+  ion-item,
+  ion-item-divider {
+    --background: #ffffff;
+    --color: #000000;
+  }
+
+  ion-label {
+    color: #000000;
+  }
+
+  ion-input,
+  ion-select {
+    --background: #ffffff;
+    --color: #000000;
+    --placeholder-color: #666666;
+    --placeholder-opacity: 1;
+  }
+
+  ion-input input,
+  ion-select .select-placeholder {
+    color: #000000;
+  }
+
+  /* Keep stacked labels visible above inputs in modal */
+  ion-item {
+    --min-height: 88px;
+  }
+
+  ion-item ion-label[position="stacked"] {
+    margin-bottom: 4px;
+    min-height: 1.5em;
+  }
+}
+
+/* Modal: header and footer white */
+:host-context(ion-modal.user-form-modal) ion-header ion-toolbar {
+  --background: #ffffff;
+  --color: #000000;
 }
 
 /* Modal: fixed footer with actions */
 ion-footer.modal-footer {
+  --background: #ffffff;
+
   ion-toolbar {
+    --background: #ffffff;
     --padding-start: 16px;
     --padding-end: 16px;
     --min-height: 56px;

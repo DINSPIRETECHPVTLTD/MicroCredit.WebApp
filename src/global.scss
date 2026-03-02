@@ -146,6 +146,26 @@
   }
 }
 
+.ag-reset-password {
+  background: #6c757d;
+  color: white;
+
+  &:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+  }
+}
+
+.ag-inactive {
+  background: var(--ion-color-danger);
+  color: white;
+
+  &:hover {
+    background: var(--ion-color-danger-shade);
+    transform: translateY(-1px);
+  }
+}
+
 .ag-navigate {
   background: var(--ion-color-success);
   color: white;
@@ -208,4 +228,5 @@ ion-modal.user-form-modal {
   --height: 90%;
   --max-height: 90vh;
   --border-radius: 12px;
+  --background: #ffffff;
 }

@@ -1,11 +1,11 @@
 <ion-content [fullscreen]="true" class="ion-padding">
     <!-- Users List -->
     <div class="users-list-container">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <div class="users-list-header">
         <h2>All Users</h2>
-        <ion-button (click)="navigateToAddUser()">
+        <ion-button (click)="navigateToAddUser()" class="add-user-btn">
           <ion-icon name="add-outline" slot="start"></ion-icon>
-          Add User
+          ADD USER
         </ion-button>
       </div>
 
