@@ -5,5 +5,11 @@ export interface UserResponse {
   surname: string;
   email: string;
   role: string;
-  address: string; // matches API property name
+  address: string;
+  address1: string;
+  address2: string;
+  city: string;
+  state: string;
+  pinCode: string;
+  phoneNumber: string;
 }

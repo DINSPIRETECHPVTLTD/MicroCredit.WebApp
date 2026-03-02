@@ -48,8 +48,7 @@ import { firstValueFrom } from 'rxjs';
 
 import { EmailControlComponent } from '../../../../shared/components/email-control';
 import { PasswordControlComponent } from '../../../../shared/components/password-control';
-import { User } from '../../models/user.model';
-import { UserFormValue } from '../../models/user-form-value.model';
+import { OrgRoles } from '../../../../shared/config/roles.constants';
 import { UserResponse } from '../../models/user-response.model';
 import { CreateUserRequest } from '../../models/create-user-request.model';
 import { UpdateUserRequest } from '../../models/update-user-request.model';
@@ -110,10 +109,9 @@ export class AddEditUserPage implements OnInit {
   private readonly modalController = inject(ModalController);
   private readonly userService = inject(UserService);
 
-  @Input() isModal = false;
   @Input() userResponse: UserResponse | null = null;
 
-  user: User | null = null;
+  user: UserResponse | null = null;
   roles = ['Owner', 'Investor'];
   form!: FormGroup;
   saving = false;
@@ -122,67 +120,13 @@ export class AddEditUserPage implements OnInit {
   get isEditMode(): boolean {
     return !!this.user;
   }
-  get pageTitle(): string {
-    return this.isEditMode ? 'Edit User' : 'Add User';
-  }
 
   constructor() {
-    if (!this.userResponse) {
-      const state = this.router.getCurrentNavigation()?.extras?.state as { user?: UserResponse } | undefined;
-      const res = state?.user ?? null;
-      this.user = res ? this.mapResponseToUser(res) : null;
-    }
+
   }
 
   ngOnInit(): void {
-    if (this.userResponse != null) {
-      this.user = this.mapResponseToUser(this.userResponse);
-    }
-    this.buildForm();
-  }
 
-  private mapResponseToUser(r: UserResponse): User {
-    return {
-      id: r.id,
-      firstName: r.firstName,
-      surname: r.surname,
-      email: r.email,
-      role: r.role,
-      address: r.address,
-      address1: r.address,
-    };
-  }
-
-  private buildForm(): void {
-    const u = this.user;
-    this.form = this.fb.nonNullable.group(
-      {
-        firstName: [u?.firstName ?? '', [Validators.required]],
-        surname: [u?.surname ?? '', [Validators.required]],
-        email: [u?.email ?? '', [Validators.required, Validators.email]],
-        phoneNumber: [u?.phoneNumber ?? ''],
-        role: [u?.role ?? 'Owner', [Validators.required]],
-        password: [''],
-        confirmPassword: [''],
-        address1: [u?.address1 ?? u?.address ?? ''],
-        address2: [u?.address2 ?? ''],
-        city: [u?.city ?? ''],
-        state: [u?.state ?? ''],
-        pinCode: [u?.pinCode ?? ''],
-      },
-      { validators: this.isEditMode ? [] : [passwordMatchValidator()] }
-    );
-    if (this.isEditMode) {
-      this.form.get('password')?.clearValidators();
-      this.form.get('password')?.updateValueAndValidity();
-      this.form.get('confirmPassword')?.clearValidators();
-      this.form.get('confirmPassword')?.updateValueAndValidity();
-    } else {
-      this.form.get('password')?.setValidators([Validators.required, Validators.minLength(6)]);
-      this.form.get('password')?.updateValueAndValidity();
-      this.form.get('confirmPassword')?.setValidators([Validators.required]);
-      this.form.get('confirmPassword')?.updateValueAndValidity();
-    }
   }
 
   getConfirmPasswordError(): string {
@@ -198,65 +142,11 @@ export class AddEditUserPage implements OnInit {
       this.form.setErrors({ ...this.form.errors, confirmPasswordMismatch: true });
       return;
     }
-    const raw = this.form.getRawValue();
-    const value: UserFormValue = {
-      email: raw.email,
-      firstName: raw.firstName,
-      surname: raw.surname,
-      role: raw.role,
-      phoneNumber: raw.phoneNumber || undefined,
-      address1: raw.address1 || undefined,
-      address2: raw.address2 || undefined,
-      city: raw.city || undefined,
-      state: raw.state || undefined,
-      pinCode: raw.pinCode || undefined,
-    };
-    if (this.isEditMode && this.user) {
-      value.id = this.user.id;
-    } else {
-      value.password = raw.password;
-    }
-
-    this.errorMessage = null;
-    this.saving = true;
-    const baseRequest: UpdateUserRequest = {
-      firstName: raw.firstName,
-      surname: raw.surname,
-      role: raw.role,
-      email: raw.email,
-      phoneNumber: raw.phoneNumber || null,
-      address1: raw.address1 || null,
-      address2: raw.address2 || null,
-      city: raw.city || null,
-      state: raw.state || null,
-      pinCode: raw.pinCode || null,
-      level: (this.user as { level?: string })?.level ?? '',
-    };
-    const req$ = this.isEditMode && this.user
-      ? this.userService.updateUser(this.user.id, baseRequest)
-      : this.userService.createUser({ ...baseRequest, password: raw.password });
-
-    firstValueFrom(req$)
-      .then(() => {
-        if (this.isModal) {
-          this.modalController.dismiss(value);
-        } else {
-          this.router.navigate(['/users']);
-        }
-      })
-      .catch((err) => {
-        this.errorMessage = err?.error?.message ?? err?.message ?? 'Request failed.';
-      })
-      .finally(() => {
-        this.saving = false;
-      });
+    
   }
 
   onCancel(): void {
-    if (this.isModal) {
       this.modalController.dismiss();
-    } else {
-      this.router.navigate(['/users']);
-    }
+
   }
 }

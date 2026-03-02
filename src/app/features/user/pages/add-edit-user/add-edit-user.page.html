@@ -1,62 +1,13 @@
 <ion-header>
   <ion-toolbar>
-    @if (!isModal) {
-      <ion-buttons slot="start">
-        <ion-back-button defaultHref="/users" text=""></ion-back-button>
-      </ion-buttons>
-    }
-    @if (isModal) {
       <ion-title>{{ isEditMode ? 'Update user information' : 'Create a new organization user' }}</ion-title>
       <ion-buttons slot="end">
         <ion-button (click)="onCancel()">
           <ion-icon name="close"></ion-icon>
         </ion-button>
       </ion-buttons>
-    } @else {
-      <ion-title>{{ pageTitle }}</ion-title>
-    }
   </ion-toolbar>
-  @if (!isModal) {
-    <ion-toolbar class="ion-no-border">
-      <ion-breadcrumbs class="breadcrumb">
-        <ion-breadcrumb href="/users">Users</ion-breadcrumb>
-        <ion-breadcrumb>{{ pageTitle }}</ion-breadcrumb>
-      </ion-breadcrumbs>
-    </ion-toolbar>
-  }
 </ion-header>
-
-<ion-content [fullscreen]="true" class="ion-padding" [class.modal-content]="isModal">
-  <div class="page-container" [class.modal-body]="isModal">
-    <!-- Page view: card with form -->
-    <ng-container *ngIf="!isModal">
-      <ion-card>
-        <ion-card-header>
-          <ion-card-title>User Details</ion-card-title>
-          <ion-card-subtitle>{{ isEditMode ? 'Update user information' : 'Create a new organization user' }}</ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content>
-          <form id="userForm" [formGroup]="form" (ngSubmit)="onSubmit()">
-            @if (errorMessage) {
-              <p class="field-error">{{ errorMessage }}</p>
-            }
-            <ng-container *ngTemplateOutlet="formFields"></ng-container>
-            <div class="action-bar">
-              <ion-button fill="outline" type="button" (click)="onCancel()" [disabled]="saving">Cancel</ion-button>
-              <ion-button color="primary" type="submit" [disabled]="form.invalid || saving">
-                {{ saving ? 'Saving…' : (isEditMode ? 'Update User' : 'Create User') }}
-              </ion-button>
-            </div>
-          </form>
-        </ion-card-content>
-      </ion-card>
-    </ng-container>
-    <!-- Modal: form only (footer has buttons) -->
-    <form *ngIf="isModal" id="userForm" [formGroup]="form" (ngSubmit)="onSubmit()">
-      <ng-container *ngTemplateOutlet="formFields"></ng-container>
-    </form>
-  </div>
-</ion-content>
 
 <ng-template #formFields>
   <!-- Basic information -->
@@ -186,7 +137,6 @@
           </ion-grid>
 </ng-template>
 
-@if (isModal) {
   @if (errorMessage) {
     <p class="field-error ion-padding">{{ errorMessage }}</p>
   }
@@ -200,4 +150,4 @@
       </ion-buttons>
     </ion-toolbar>
   </ion-footer>
-}
+

@@ -106,7 +106,7 @@ export class UserListPage implements OnInit {
   async navigateToAddUser(): Promise<void> {
     const modal = await this.modalController.create({
       component: AddEditUserPage,
-      componentProps: { userResponse: null, isModal: true },
+      componentProps: { userResponse: null },
       cssClass: 'user-form-modal',
     });
     await modal.present();
@@ -117,7 +117,7 @@ export class UserListPage implements OnInit {
   async onEditUser(user: UserResponse): Promise<void> {
     const modal = await this.modalController.create({
       component: AddEditUserPage,
-      componentProps: { userResponse: user, isModal: true },
+      componentProps: { userResponse: user},
       cssClass: 'user-form-modal',
     });
     await modal.present();
